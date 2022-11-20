@@ -23,6 +23,7 @@ export function Menu(){
 			<ProductModal
 				visible={isModalVisible}
 				onClose={() => setIsModalVisible(false)}
+				product={selectedProduct}
 			/>
 			<FlatList
 				data={products}
