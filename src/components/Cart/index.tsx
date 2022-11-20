@@ -42,7 +42,7 @@ export function Cart({ cartItems }: CartProps){
 							</ProductDetails>
 						</ProductContainer>
 						<Actions>
-							<TouchableOpacity style={{ marginRight: 32 }}>
+							<TouchableOpacity style={{ marginRight: 24 }}>
 								<PlusCircle />
 							</TouchableOpacity>
 							<TouchableOpacity>
