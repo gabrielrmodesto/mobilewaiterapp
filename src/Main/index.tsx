@@ -8,19 +8,20 @@ import { Cart } from '../components/Cart';
 import { Container, CategoryContainer, MenuContainer, Footer, FooterContainer } from './styles';
 import { CartItem } from '../types/CartItem';
 import { products } from '../mocks/products';
+import { Product } from '../types/Product';
 
 export function Main(){
 	const [isTableModalVisible, setIsTableModalVisible] = useState(false);
 	const [selectedTable, setSelectedTable] = useState('');
 	const [cartItems, setCartItems] = useState<CartItem[]>([
-		{
-			quantity: 1,
-			product: products[0]
-		},
-		{
-			quantity: 1,
-			product: products[1]
-		}
+		// {
+		// 	quantity: 1,
+		// 	product: products[0]
+		// },
+		// {
+		// 	quantity: 1,
+		// 	product: products[1]
+		// },
 	]);
 
 	function handleSaveTable(table: string){
@@ -31,6 +32,33 @@ export function Main(){
 		setSelectedTable('');
 	}
 
+	function handleAddToCart(product: Product){
+		if(!selectedTable){
+			setIsTableModalVisible(true);
+		}
+		//alert(product.name);
+		setCartItems((prevState) => {
+			const itemIndex = prevState.findIndex(
+				cartItem => cartItem.product._id === product._id
+			);
+			if(itemIndex < 0){
+				return prevState.concat({
+					quantity: 1,
+					product
+				});
+			}
+
+			const newCartItems = [...prevState];
+			const item = newCartItems[itemIndex];
+
+			newCartItems[itemIndex] = {
+				...item,
+				quantity: item.quantity + 1,
+			};
+
+			return newCartItems;
+		});
+	}
 	return(
 		<>
 			<Container>
@@ -39,20 +67,20 @@ export function Main(){
 					<Categories />
 				</CategoryContainer>
 				<MenuContainer>
-					<Menu />
+					<Menu onAddToCart={handleAddToCart}/>
 				</MenuContainer>
 			</Container>
 			<Footer>
-				<FooterContainer>
-					{!selectedTable && (
-						<Button onPress={() => setIsTableModalVisible(true)}>
-							Novo pedido
-						</Button>
-					)}
-					{selectedTable && (
-						<Cart cartItems={cartItems} />
-					)}
-				</FooterContainer>
+				{/* <FooterContainer> */}
+				{!selectedTable && (
+					<Button onPress={() => setIsTableModalVisible(true)}>
+						Novo pedido
+					</Button>
+				)}
+				{selectedTable && (
+					<Cart cartItems={cartItems} />
+				)}
+				{/* </FooterContainer> */}
 			</Footer>
 
 			<TableModal
