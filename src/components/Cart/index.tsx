@@ -23,9 +23,10 @@ interface CartProps{
 	cartItems: CartItem[];
 	onAdd: (product: Product) => void;
 	onRemove: (product: Product) => void;
+	onConfirmOrder: () => void;
 }
 
-export function Cart({ cartItems, onAdd, onRemove }: CartProps){
+export function Cart({ cartItems, onAdd, onRemove, onConfirmOrder }: CartProps){
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const total = cartItems.reduce((acc, cartItem) => {
 		return acc + cartItem.quantity * cartItem.product.price;
@@ -35,11 +36,15 @@ export function Cart({ cartItems, onAdd, onRemove }: CartProps){
 		setIsModalVisible(true);
 	}
 
+	function handleOk(){
+		onConfirmOrder();
+		setIsModalVisible(false);
+	}
 	return(
 		<>
 			<OrderModalConfirmed
 				visible={isModalVisible}
-				onOk={() => setIsModalVisible(false)}
+				onOk={handleOk}
 			/>
 			{cartItems.length > 0 && (
 				<FlatList

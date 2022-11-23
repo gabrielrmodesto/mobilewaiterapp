@@ -1,3 +1,4 @@
+import { StatusBar } from 'expo-status-bar';
 import { Modal } from 'react-native';
 import { CheckCircle } from '../Icons/CheckCircle';
 import { Text } from '../Text';
@@ -15,6 +16,7 @@ export function OrderModalConfirmed({visible, onOk}: OrderModalConfirmedProps){
 				visible={visible}
 				animationType='fade'
 			>
+				<StatusBar style="light" />
 				<Container>
 					<CheckCircle />
 					<Text size={20} weight='600' color='#fff' style={{ marginTop: 12, marginBottom: 4}}>
