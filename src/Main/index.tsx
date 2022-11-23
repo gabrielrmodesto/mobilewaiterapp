@@ -30,13 +30,13 @@ export function Main(){
 
 	function handleCancelOrder(){
 		setSelectedTable('');
+		setCartItems([]);
 	}
 
 	function handleAddToCart(product: Product){
 		if(!selectedTable){
 			setIsTableModalVisible(true);
 		}
-		//alert(product.name);
 		setCartItems((prevState) => {
 			const itemIndex = prevState.findIndex(
 				cartItem => cartItem.product._id === product._id
@@ -59,6 +59,28 @@ export function Main(){
 			return newCartItems;
 		});
 	}
+	function handleRemoveCartItem(product: Product){
+		setCartItems((prevState) => {
+			const itemIndex = prevState.findIndex(
+				cartItem => cartItem.product._id === product._id
+			);
+			const item = prevState[itemIndex];
+			const newCartItems = [...prevState];
+
+			if(item.quantity === 1){
+				newCartItems.splice(itemIndex, 1);
+
+				return newCartItems;
+			}
+
+			newCartItems[itemIndex] = {
+				...item,
+				quantity: item.quantity - 1,
+			};
+
+			return newCartItems;
+		});
+	}
 	return(
 		<>
 			<Container>
@@ -67,7 +89,7 @@ export function Main(){
 					<Categories />
 				</CategoryContainer>
 				<MenuContainer>
-					<Menu onAddToCart={handleAddToCart}/>
+					<Menu onAddToCart={handleAddToCart} />
 				</MenuContainer>
 			</Container>
 			<Footer>
@@ -78,7 +100,11 @@ export function Main(){
 					</Button>
 				)}
 				{selectedTable && (
-					<Cart cartItems={cartItems} />
+					<Cart
+						cartItems={cartItems}
+						onAdd={handleAddToCart}
+						onRemove={handleRemoveCartItem}
+					/>
 				)}
 				{/* </FooterContainer> */}
 			</Footer>
