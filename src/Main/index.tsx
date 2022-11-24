@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '../components/Button';
 import { Categories } from '../components/Categories';
 import { Header } from '../components/Header';
@@ -6,7 +6,6 @@ import { Menu } from '../components/Menu';
 import { TableModal } from '../components/TableModal';
 import { Cart } from '../components/Cart';
 import { CartItem } from '../types/CartItem';
-import { products as MockProducts } from '../mocks/products';
 import { Product } from '../types/Product';
 import { ActivityIndicator } from 'react-native';
 import {
@@ -14,18 +13,38 @@ import {
 	CategoryContainer,
 	MenuContainer,
 	Footer,
-	FooterContainer,
 	CenteredContainer
 } from './styles';
 import { Empty } from '../components/Icons/Empty';
 import { Text } from '../components/Text';
+import { Category } from '../types/Category';
+import { api } from '../utils/api';
 
 export function Main(){
-	const [isLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 	const [isTableModalVisible, setIsTableModalVisible] = useState(false);
 	const [selectedTable, setSelectedTable] = useState('');
 	const [cartItems, setCartItems] = useState<CartItem[]>([]);
-	const [products] = useState<Product[]>([]);
+	const [products, setProducts] = useState<Product[]>([]);
+	const [categories, setCategories] = useState<Category[]>([]);
+
+	useEffect(() => {
+		Promise.all([
+			api.get('/categories'),
+			api.get('/products')
+		]).then(([categoriesResponse, productResponse]) => {
+			setCategories(categoriesResponse.data);
+			setProducts(productResponse.data);
+			setIsLoading(false);
+		});
+		// axios.get('http://192.168.1.65:3001/categories').then((response) => {
+		// 	setCategories(response.data);
+		// });
+		// axios.get('http://192.168.1.65:3001/products').then((response) => {
+		// 	setProducts(response.data);
+		// });
+	}, []);
+
 	function handleSaveTable(table: string){
 		setSelectedTable(table);
 	}
@@ -97,7 +116,9 @@ export function Main(){
 				{!isLoading && (
 					<>
 						<CategoryContainer>
-							<Categories />
+							<Categories
+								categories={categories}
+							/>
 						</CategoryContainer>
 						{products.length > 0 ? (
 							<>
