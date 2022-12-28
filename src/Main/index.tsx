@@ -27,6 +27,7 @@ export function Main(){
 	const [cartItems, setCartItems] = useState<CartItem[]>([]);
 	const [products, setProducts] = useState<Product[]>([]);
 	const [categories, setCategories] = useState<Category[]>([]);
+	const [isProductsLoading, setIsProductsLoading] = useState(false);
 
 	useEffect(() => {
 		Promise.all([
@@ -50,8 +51,11 @@ export function Main(){
 			? '/products'
 			: `/categories/${categoryId}/products`;
 
+		setIsProductsLoading(true);
 		const {data} = await api.get(route);
 		setProducts(data);
+
+		setIsProductsLoading(false);
 	}
 	function handleSaveTable(table: string){
 		setSelectedTable(table);
@@ -129,21 +133,30 @@ export function Main(){
 								onSelectCategory={handleSelectCategory}
 							/>
 						</CategoryContainer>
-						{products.length > 0 ? (
-							<>
-								<MenuContainer>
-									<Menu
-										onAddToCart={handleAddToCart}
-										products={products}
-									/>
-								</MenuContainer>
-							</>
-						) : (
+
+						{isProductsLoading ? (
 							<CenteredContainer>
-								<Empty />
-								<Text color='#666' style={{marginTop: 24}}
-								>Nenhum produto foi encontrado!</Text>
+								<ActivityIndicator color="#D73035" size="large" />
 							</CenteredContainer>
+						) : (
+							<>
+								{products.length > 0 ? (
+									<>
+										<MenuContainer>
+											<Menu
+												onAddToCart={handleAddToCart}
+												products={products}
+											/>
+										</MenuContainer>
+									</>
+								) : (
+									<CenteredContainer>
+										<Empty />
+										<Text color='#666' style={{marginTop: 24}}
+										>Nenhum produto foi encontrado!</Text>
+									</CenteredContainer>
+								)}
+							</>
 						)}
 					</>
 				)}
