@@ -37,14 +37,22 @@ export function Main(){
 			setProducts(productResponse.data);
 			setIsLoading(false);
 		});
-		// axios.get('http://192.168.1.65:3001/categories').then((response) => {
+		// axios.get('http://192.168.1.211:3001/categories').then((response) => {
 		// 	setCategories(response.data);
 		// });
-		// axios.get('http://192.168.1.65:3001/products').then((response) => {
+		// axios.get('http://192.168.1.211:3001/products').then((response) => {
 		// 	setProducts(response.data);
 		// });
 	}, []);
 
+	async function handleSelectCategory(categoryId: string){
+		const route = !categoryId
+			? '/products'
+			: `/categories/${categoryId}/products`;
+
+		const {data} = await api.get(route);
+		setProducts(data);
+	}
 	function handleSaveTable(table: string){
 		setSelectedTable(table);
 	}
@@ -118,6 +126,7 @@ export function Main(){
 						<CategoryContainer>
 							<Categories
 								categories={categories}
+								onSelectCategory={handleSelectCategory}
 							/>
 						</CategoryContainer>
 						{products.length > 0 ? (
