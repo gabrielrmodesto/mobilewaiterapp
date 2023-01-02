@@ -178,6 +178,7 @@ export function Main(){
 						onAdd={handleAddToCart}
 						onRemove={handleRemoveCartItem}
 						onConfirmOrder={handleResetOrder}
+						selectedTable={selectedTable}
 					/>
 				)}
 				{/* </FooterContainer> */}

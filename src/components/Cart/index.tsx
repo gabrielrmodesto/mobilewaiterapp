@@ -18,22 +18,36 @@ import { Button } from '../Button';
 import { Product } from '../../types/Product';
 import { OrderModalConfirmed } from '../OrderModalConfirmed';
 import { useState } from 'react';
+import { api } from '../../utils/api';
 
 interface CartProps{
 	cartItems: CartItem[];
 	onAdd: (product: Product) => void;
 	onRemove: (product: Product) => void;
 	onConfirmOrder: () => void;
+	selectedTable: string;
 }
 
-export function Cart({ cartItems, onAdd, onRemove, onConfirmOrder }: CartProps){
-	const [isLoading] = useState(false);
+export function Cart({ cartItems, onAdd, onRemove, onConfirmOrder, selectedTable }: CartProps){
+	const [isLoading, setIsLoading] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const total = cartItems.reduce((acc, cartItem) => {
 		return acc + cartItem.quantity * cartItem.product.price;
 	}, 0);
 
-	function handleOrderModalConfirmed(){
+	async function handleOrderModalConfirmed(){
+		const payload = {
+			table: selectedTable,
+			products: cartItems.map((cartItem) => ({
+				product: cartItem.product._id,
+				quantity: cartItem.quantity
+			}))
+		};
+		setIsLoading(true);
+
+		await api.post('/orders', payload);
+
+		setIsLoading(false);
 		setIsModalVisible(true);
 	}
 
